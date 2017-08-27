@@ -9,14 +9,15 @@ try{
     if(process.env.ENV === 'live')
         web3.setProvider(new web3.providers.HttpProvider(config['provider-remote'].live))
     else
-        web3.setProvider(new web3.providers.HttpProvider(config['provider-remote'].dev))
+        web3.setProvider(new web3.providers.HttpProvider(config['provider'].dev))
     /*
     we start with a few simple calls, note that, since we're accessing the variable and not providing a callback function as the last argument, all these function calls are synchronous
     */
     
     console.log("connecting to",web3.currentProvider)
     console.log("this node is connected to a network with id",web3.version.network)
-    console.log("and eth version", web3.version.ethereum,"i.e.",parseInt(web3.version.ethereum))
+    console.log("and eth protocol version", web3.version.ethereum,"i.e.",parseInt(web3.version.ethereum))
+    console.log("etherbase is",web3.eth.coinbase)
     console.log("balance of",address,"is",web3.fromWei(web3.eth.getBalance(address),"ether").toString(),"in ether (in wei that's",web3.eth.getBalance(address).toString(),")")
     console.log("and this address has done",web3.eth.getTransactionCount(address),"transactions")
     
