@@ -12,20 +12,21 @@ try{
     /*
     we start with a few simple calls, note that, since we're accessing the variable and not providing a callback function as the last argument, all these function calls are synchronous
     */
-/*    
+    
     console.log("connecting to",web3.currentProvider)
     console.log("this node is connected to a network with id",web3.version.network)
     console.log("and eth version", web3.version.ethereum,"i.e.",parseInt(web3.version.ethereum))
     console.log("balance of",address,"is",web3.fromWei(web3.eth.getBalance(address),"ether").toString(),"in ether (in wei that's",web3.eth.getBalance(address).toString(),")")
     console.log("and this address has done",web3.eth.getTransactionCount(address),"transactions")
-*/    
+    
     /*
     Let's do some block inspection
     */
-    /*
+
     var currentBlock = web3.eth.blockNumber
     console.log("current block is",currentBlock)
-    currentBlock = 1489908
+    //jump to a more 'relevant' block
+    currentBlock = 1489909
     while(currentBlock > 0) {
         var block = web3.eth.getBlock(currentBlock)
         if(block.miner === address) {
@@ -35,14 +36,16 @@ try{
             console.log("---->and",block.transactions.length,"transactions")
             console.log("---->with extra data",block.extraData)
             console.log("---->which means",block.extraData.match(/.{2}/g).map((v)=>{return String.fromCharCode(parseInt(v,16))}).join(''))
-
             
         } else {
-            console.log("nothing in",currentBlock)
+            console.log("nothing interesting in",currentBlock)
         }
         currentBlock--       
     }
-    */
+    /*
+    there are two block names which are special - latest and pending
+    let's see what transactions are pending (have not been included in a block
+    */ 
     var pending = web3.eth.getBlock("pending")
     if(pending != null && pending.transactions.length > 0){
         console.log("there are",pending.transactions.length,"waiting to be mined")
