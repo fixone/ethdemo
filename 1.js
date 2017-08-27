@@ -1,14 +1,15 @@
 const Web3 = require('../ethereum/node_modules/web3/index.js')
 const web3 = new Web3()
 //not really much here, just a RPC URL for a geth node
+//you can even use an infura.io node for the demo here
 const config = require('../ethereum/config')
 const address = "0xB98B9dCfDF06095408530C395Dea296103469257".toLowerCase()
 
 try{
     if(process.env.ENV === 'live')
-        web3.setProvider(new web3.providers.HttpProvider(config.provider.live))
+        web3.setProvider(new web3.providers.HttpProvider(config['provider-remote'].live))
     else
-        web3.setProvider(new web3.providers.HttpProvider(config.provider.dev))
+        web3.setProvider(new web3.providers.HttpProvider(config['provider-remote'].dev))
     /*
     we start with a few simple calls, note that, since we're accessing the variable and not providing a callback function as the last argument, all these function calls are synchronous
     */
@@ -27,7 +28,8 @@ try{
     console.log("current block is",currentBlock)
     //jump to a more 'relevant' block
     currentBlock = 1489909
-    while(currentBlock > 0) {
+    var blocksDone = 10 //stop after this many blocks inspected
+    while(currentBlock > 0 && blocksDone > 0) {
         var block = web3.eth.getBlock(currentBlock)
         if(block.miner === address) {
             console.log("looking in",currentBlock)
@@ -40,7 +42,8 @@ try{
         } else {
             console.log("nothing interesting in",currentBlock)
         }
-        currentBlock--       
+        currentBlock-- 
+        blocksDone--
     }
     /*
     there are two block names which are special - latest and pending
@@ -50,11 +53,14 @@ try{
     if(pending != null && pending.transactions.length > 0){
         console.log("there are",pending.transactions.length,"waiting to be mined")
         console.log("and they are",pending.transactions)
-        var tx = web3.eth.getTransaction(pending.transactions[0])
-        if(tx.to == null) {
-            console.log("the first transaction is a contract creation by", tx.from)
+        var tx = web3.eth.getTransaction(pending.transactions[pending.transactions.length-1])
+        if(tx.to == null || parseInt(tx.to) === 0) {
+            console.log("the last transaction is a contract creation by", tx.from)
         } else {
-            console.log("the first one being from", tx.from,"to",tx.to,"in amount of",web3.fromWei(tx.value,"ether").toString(),"ether")
+            console.log("the last one being from", tx.from,"to",tx.to,"in amount of",web3.fromWei(tx.value,"ether").toString(),"ether")
+            if(tx.value == 0) {
+                console.log("(this means that it's a contract call, for which the details are in the 'input' variable",tx.input,")")
+            }
         }
     } else {
         console.log("No unmined transactions")
