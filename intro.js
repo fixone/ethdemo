@@ -3,7 +3,9 @@ const web3 = new Web3()
 //not really much here, just a RPC URL for a geth node
 //you can even use an infura.io node for the demo here
 const config = require('../ethereum/config')
-const address = "0xB98B9dCfDF06095408530C395Dea296103469257".toLowerCase()
+const key = require('./key')
+
+const address = key.address.toLowerCase()
 
 try{
     if(process.env.ENV === 'live')
@@ -28,7 +30,7 @@ try{
     var currentBlock = web3.eth.blockNumber
     console.log("current block is",currentBlock)
     //jump to a more 'relevant' block
-    currentBlock = 1489909
+    currentBlock = 1568147
     var blocksDone = 10 //stop after this many blocks inspected
     while(currentBlock > 0 && blocksDone > 0) {
         var block = web3.eth.getBlock(currentBlock)
@@ -52,7 +54,7 @@ try{
     */ 
     var pending = web3.eth.getBlock("pending")
     if(pending != null && pending.transactions.length > 0){
-        console.log("there are",pending.transactions.length,"waiting to be mined")
+        console.log("there are",pending.transactions.length,"transactions waiting to be mined")
         console.log("and they are",pending.transactions)
         var tx = web3.eth.getTransaction(pending.transactions[pending.transactions.length-1])
         if(tx.to == null || parseInt(tx.to) === 0) {

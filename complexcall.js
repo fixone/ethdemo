@@ -21,7 +21,7 @@ var contractData = tokenContract.transfer.getData(destination,999)
 
 gasPrice = web3.eth.gasPrice
 gasPriceHex = web3.toHex(gasPrice)
-gasLimitHex = web3.toHex(50000)
+gasLimitHex = web3.toHex(500000)
 
 var privateKey = new Buffer(key.key, 'hex')
 var sender = keth.privateKeyToAddress(key.key)
