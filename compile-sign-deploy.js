@@ -17,6 +17,20 @@ console.log("we should now have in 'bin' the abi and the compiled contract")
 var contract = web3.eth.contract(JSON.parse(abi))
 
 /*
+helper function to check when a transaction is mined
+*/
+var getReceipt = (hash) => {
+    console.log("waiting for transaction",hash,"to be mined")
+    block = web3.eth.getTransactionReceipt(hash)
+    
+    if(block == null) {
+        setTimeout(()=>getReceipt(hash),1000)
+    } else {
+        console.log("transaction mined in block",block.blockNumber,"which has hash",block.blockHash)
+    }
+}
+
+/*
 read key and address from a file
 */
 var personal = require('./key')
@@ -51,5 +65,10 @@ var txhex = serializedTx.toString("hex")
 if(txhex.substring(0,3) != '0x')
     txhex = '0x'+txhex
 console.log("sending hex TX",txhex)
-console.log("transaction sent with hash",web3.eth.sendRawTransaction(txhex))
+
+var hash = web3.eth.sendRawTransaction(txhex)
+console.log("transaction sent with hash",hash)
+
+getReceipt(hash)
+
 
