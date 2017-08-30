@@ -21,7 +21,7 @@ read key and address from a file
 */
 var personal = require('./key')
 var deployer = personal.address
-console.log("deploying from", deployer)
+console.log("deploying from", deployer, "using", web3.currentProvider)
 
 const tokenCfg = require('./config')
 
@@ -30,8 +30,8 @@ var cData = contract.new.getData(parseInt(tokenCfg.supply),tokenCfg.name,parseIn
 var gasLimit = web3.eth.estimateGas({data: cData})
 console.log("it's about",gasLimit,"gas")
 nonceHex = web3.toHex(web3.eth.getTransactionCount(deployer))
-gasPriceHex = web3.toHex(web3.eth.gasPrice)
-gasLimitHex = web3.toHex(gasLimit)
+gasPriceHex = web3.toHex(web3.eth.gasPrice+1)
+gasLimitHex = web3.toHex(gasLimit+1)
 
 console.log("nonce is",nonceHex,"for",deployer,"gasLimit",gasLimitHex,"gasPrice",gasPriceHex)
 var rawTx = {

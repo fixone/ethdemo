@@ -3,27 +3,15 @@ const web3 = new Web3()
 const config = require('../ethereum/config')
 var Tx = require('../ethereum/node_modules/ethereumjs-tx/index.js')
 const key = require('./key')
-web3.setProvider(new web3.providers.HttpProvider(config.provider.dev))
+web3.setProvider(new web3.providers.HttpProvider(config['provider-remote'].dev))
 const keth = require('../ethereum/node_modules/keythereum/index.js')
-const fs = require('fs')
-var abi = fs.readFileSync("bin/BucJSToken.abi")
-var contract = web3.eth.contract(JSON.parse(abi))
 
-var instance = require('./contract.json')
 
-var tokenContract = contract.at(instance.contract)
-
-//console.log(tokenContract)
-
-//const destination = "0xB98B9dCfDF06095408530C395Dea296103469257"
-//const destination = "0x3de654b603addf6255a1d88647f703210e389ee6"
 const destination = "0x901Add46F7Cabb7Ba8bC51fc5777CC6f3aF47acF"
-/*we simulate the call to get the payload data which we'll use in the handcrafted transaction*/
-var contractData = tokenContract.transfer.getData(destination,1000)
 
 gasPrice = web3.eth.gasPrice
-gasPriceHex = web3.toHex(gasPrice)
-gasLimitHex = web3.toHex(500000)
+gasPriceHex = web3.toHex(gasPrice+1)
+gasLimitHex = web3.toHex(100000)
 
 var privateKey = new Buffer(key.key, 'hex')
 var sender = keth.privateKeyToAddress(key.key)
@@ -37,10 +25,10 @@ var rawTx = {
     nonce: nonceHex,
     gasPrice: gasPriceHex,
     gasLimit: gasLimitHex,
-    to: instance.contract,
+    to: destination,
     from: sender,
-    value: '0x00',
-    data: contractData
+    value: web3.toHex(web3.toWei(1,"ether")),
+    data: web3.fromAscii('Hello!')
 }
 
 var tx = new Tx(rawTx);
@@ -55,4 +43,3 @@ if(txhex.substring(0,3) != '0x')
 console.log("sendingTX",txhex)
 console.log("transaction sent with hash",web3.eth.sendRawTransaction(txhex))
 
-console.log("balance of",sender,"is",tokenContract.balanceOf(key.address).toString(),"of",tokenContract.symbol(),"tokens")

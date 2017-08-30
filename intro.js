@@ -6,7 +6,7 @@ const config = require('../ethereum/config')
 const key = require('./key')
 
 const address = key.address.toLowerCase()
-
+/////everything below can be used verbatim, provided that the configs & libraries have been corectly loaded. also init the 'address' variable with the desired value
 try{
     if(process.env.ENV === 'live')
         web3.setProvider(new web3.providers.HttpProvider(config['provider-remote'].live))
@@ -30,7 +30,7 @@ try{
     var currentBlock = web3.eth.blockNumber
     console.log("current block is",currentBlock)
     //jump to a more 'relevant' block
-    currentBlock = 1568147
+    currentBlock = 1567759
     var blocksDone = 10 //stop after this many blocks inspected
     while(currentBlock > 0 && blocksDone > 0) {
         var block = web3.eth.getBlock(currentBlock)
@@ -40,7 +40,7 @@ try{
             console.log("---->has hash",block.hash)
             console.log("---->and",block.transactions.length,"transactions")
             console.log("---->with extra data",block.extraData)
-            console.log("---->which means",block.extraData.match(/.{2}/g).map((v)=>{return String.fromCharCode(parseInt(v,16))}).join(''))
+            console.log("---->which means",web3.toAscii(block.extraData))
             
         } else {
             console.log("nothing interesting in",currentBlock)

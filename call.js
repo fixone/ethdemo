@@ -3,7 +3,13 @@ const web3 = new Web3()
 const config = require('../ethereum/config')
 web3.setProvider(new web3.providers.HttpProvider(config.provider.dev))
 //const address = "0xB98B9dCfDF06095408530C395Dea296103469257"
-const address = "0x3de654b603addf6255a1d88647f703210e389ee6"
+//const address = "0x3de654b603addf6255a1d88647f703210e389ee6"
+const key = require('./key')
+const address = key.address
+
+//up to here is the config section, change as desired
+//compilation needs to happen before
+
 const fs = require('fs')
 var abi = fs.readFileSync("bin/BucJSToken.abi")
 var contract = web3.eth.contract(JSON.parse(abi))
@@ -15,7 +21,7 @@ if(instance != null && instance.contract != null) {
     since the contract was deployed using the first account in personal, that account owns all the tokens
     */ 
     var sender = web3.personal.listAccounts[0]
-    console.log("sending from", sender)
+    console.log("sending from", sender,"to",address)
     web3.personal.unlockAccount(sender,"")
 
     /*
